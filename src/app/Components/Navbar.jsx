@@ -26,7 +26,7 @@ const Navbar = () => {
             </div>
 
             {/* Sidebar */}
-            <div className="drawer-side z-30">
+            <div className="drawer-side z-30 max-h-full">
                 <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
 
                 <div
@@ -58,8 +58,8 @@ const Navbar = () => {
                         <Link
                             href="/NewBlog"
                             className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ${pathname === '/NewBlog'
-                                    ? 'bg-gradient-to-r from-indigo-600/30 to-purple-600/30 text-white border-l-4 border-indigo-500'
-                                    : 'hover:bg-gray-800/50'
+                                ? 'bg-gradient-to-r from-indigo-600/30 to-purple-600/30 text-white border-l-4 border-indigo-500'
+                                : 'hover:bg-gray-800/50'
                                 }`}
                         >
                             <div className="p-2 bg-indigo-900/30 rounded-lg">
@@ -73,8 +73,8 @@ const Navbar = () => {
                         <Link
                             href="/AllBlogs"
                             className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ${pathname === '/AllBlogs'
-                                    ? 'bg-gradient-to-r from-indigo-600/30 to-purple-600/30 text-white border-l-4 border-indigo-500'
-                                    : 'hover:bg-gray-800/50'
+                                ? 'bg-gradient-to-r from-indigo-600/30 to-purple-600/30 text-white border-l-4 border-indigo-500'
+                                : 'hover:bg-gray-800/50'
                                 }`}
                         >
                             <div className="p-2 bg-indigo-900/30 rounded-lg">

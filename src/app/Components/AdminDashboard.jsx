@@ -150,8 +150,7 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Bottom Row */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Recent Activity */}
+                {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2 bg-gray-800/30 border border-gray-700 rounded-xl p-6">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-bold text-white">Recent Activity</h2>
@@ -177,14 +176,12 @@ const AdminDashboard = () => {
                         </div>
                     </div>
 
-                    {/* Quick Stats */}
                     <div className="bg-gray-800/30 border border-gray-700 rounded-xl p-6">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-bold text-white">Calendar</h2>
                             <button className="text-indigo-400 hover:text-indigo-300 text-sm">Add Event</button>
                         </div>
 
-                        {/* Calendar Placeholder */}
                         <div className="bg-gray-800/20 rounded-xl p-4 mb-6">
                             <div className="flex justify-between items-center mb-4">
                                 <button className="text-gray-400 hover:text-white">
@@ -205,7 +202,6 @@ const AdminDashboard = () => {
                                     <div key={day} className="text-gray-500 text-sm py-1">{day}</div>
                                 ))}
 
-                                {/* Calendar days - simplified for demo */}
                                 {[...Array(35)].map((_, i) => (
                                     <div
                                         key={i}
@@ -222,7 +218,6 @@ const AdminDashboard = () => {
                             </div>
                         </div>
 
-                        {/* Upcoming Events */}
                         <div>
                             <h3 className="font-bold text-white mb-4">Upcoming Events</h3>
                             <div className="space-y-3">
@@ -243,7 +238,7 @@ const AdminDashboard = () => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     );
