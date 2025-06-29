@@ -43,8 +43,10 @@ const Navbar = () => {
                                 </svg>
                             </div>
                             <div>
+                                <Link href="/" className="">
                                 <h1 className="text-xl font-bold text-white">BlogAdmin Pro</h1>
                                 <p className="text-xs text-gray-400">Content Management System</p>
+                                    </Link>
                             </div>
                         </div>
                     </div>

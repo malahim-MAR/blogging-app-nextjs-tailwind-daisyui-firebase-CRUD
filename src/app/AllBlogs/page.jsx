@@ -74,7 +74,9 @@ const BlogPage = () => {
             ]
         });
     };
-
+    const handleEdit = (blogId) => {
+        console.log("Edit blog with ID:", blogId);
+    }
     // Helper function to process tags
     const processTags = (tags) => {
         if (Array.isArray(tags)) return tags;
@@ -197,11 +199,11 @@ const BlogPage = () => {
                                         </div>
                                     )}
 
-                                    <div className="relative h-48">
+                                    <div className="relative h-auto">
                                         <img
                                             src={blog.BlogImageLink || "https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop"}
                                             alt={blog.BlogTitle}
-                                            className="w-full h-full object-cover"
+                                            className="w-full h-100 object-cover"
                                             onError={(e) => {
                                                 e.target.src = "https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop";
                                             }}
@@ -255,7 +257,8 @@ const BlogPage = () => {
                                                     <span>View</span>
                                                 </Link>
                                                 <Link
-                                                    href={`/edit-blog/${blog.id}`}
+                                                    onClick={() => handleEdit(blog.id)}
+                                                    href={`/EditBlog/${blog.id}`}
                                                     className="flex items-center gap-1 px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                                                 >
                                                     <FiEdit size={16} />

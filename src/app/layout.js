@@ -20,12 +20,10 @@ export default function RootLayout({ children }) {
         className={`${poppins.variable} antialiased bg-gray-900 text-gray-100`}
       >
         <div className="flex min-h-screen">
-          <div className="bg-gray-800">
+          <div className="bg-gray-800 w-auto h-full">
             <Navbar />
           </div>
-          <main className="flex-1 overflow-auto">
-            {children}
-          </main>
+          <main className="flex-1 overflow-auto">{children}</main>
         </div>
       </body>
     </html>
