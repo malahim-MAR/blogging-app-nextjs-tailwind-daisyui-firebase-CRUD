@@ -10,20 +10,20 @@ const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700'] }
 const Page = () => {
     const [title, setTitle] = useState("");
     const [imageLink, setImageLink] = useState("");
-    const [selectedTags, setSelectedTags] = useState([]);
+    const [selectedTag, setSelectedTag] = useState(""); // Changed to string instead of array
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const availableTags = ["Politics", "Sports", "Technology", "AI", "Business", "Lifestyle", "Travel", "Health"];
+    const availableTags = ["Politics", "Sports", "Technology & AI", "Business", "Lifestyle", "Travel", "Health"];
 
-    const toggleTag = (tag) => {
-        if (selectedTags.includes(tag)) {
-            setSelectedTags(selectedTags.filter(t => t !== tag));
+    const handleTagSelection = (tag) => {
+        if (selectedTag === tag) {
+            // Deselect if same tag is clicked again
+            setSelectedTag("");
         } else {
-            if (selectedTags.length < 3) {
-                setSelectedTags([...selectedTags, tag]);
-            }
+            // Select new tag
+            setSelectedTag(tag);
         }
     };
 
@@ -31,7 +31,7 @@ const Page = () => {
         e.preventDefault();
         setError("");
 
-        if (!title.trim() || selectedTags.length === 0 || !content.trim()) {
+        if (!title.trim() || !selectedTag || !content.trim()) {
             setError("Please fill in all required fields");
             return;
         }
@@ -42,13 +42,13 @@ const Page = () => {
                 BlogId: Math.floor(Math.random() * 1000000) + 1,
                 BlogTitle: title,
                 BlogImageLink: imageLink,
-                BlogTags: selectedTags,
+                BlogTags: selectedTag, // Now storing a single string
                 BlogContent: content,
                 BlogPublishTime: serverTimestamp(),
             });
             setTitle("");
             setImageLink("");
-            setSelectedTags([]);
+            setSelectedTag("");
             setContent("");
             setError(""); // Clear any previous errors
         } catch (err) {
@@ -141,43 +141,42 @@ const Page = () => {
 
                             <div className="space-y-3">
                                 <label className="block text-base font-medium text-gray-300">
-                                    Tags <span className="text-red-400">*</span>
-                                    <span className="text-xs text-gray-500 ml-2">(Select up to 3)</span>
+                                    Category <span className="text-red-400">*</span>
                                 </label>
                                 <div className="flex flex-wrap gap-2">
                                     {availableTags.map(tag => (
                                         <button
                                             key={tag}
                                             type="button"
-                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedTags.includes(tag)
+                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedTag === tag
                                                 ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
                                                 : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                                                 }`}
-                                            onClick={() => toggleTag(tag)}
+                                            onClick={() => handleTagSelection(tag)}
                                         >
                                             {tag}
                                         </button>
                                     ))}
                                 </div>
-                                <div className="flex flex-wrap gap-2 mt-3">
-                                    {selectedTags.map(tag => (
-                                        <span
-                                            key={tag}
-                                            className="bg-indigo-900/30 text-indigo-300 px-3 py-1.5 rounded-lg flex items-center text-sm"
-                                        >
-                                            {tag}
+
+                                {/* Show selected tag */}
+                                {selectedTag && (
+                                    <div className="mt-3">
+                                        <p className="text-gray-400 text-sm mb-1">Selected Category:</p>
+                                        <div className="inline-flex items-center bg-indigo-900/30 text-indigo-300 px-4 py-2 rounded-lg">
+                                            {selectedTag}
                                             <button
                                                 type="button"
                                                 className="ml-2 text-indigo-400 hover:text-white"
-                                                onClick={() => toggleTag(tag)}
+                                                onClick={() => setSelectedTag("")}
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                                     <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                                                 </svg>
                                             </button>
-                                        </span>
-                                    ))}
-                                </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="space-y-3">
@@ -233,22 +232,6 @@ const Page = () => {
                         </form>
                     </div>
                 </div>
-
-                {/* Stats footer */}
-                {/* <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
-            <div className="text-gray-400 text-sm">Current Draft</div>
-            <div className="text-gray-200 font-medium mt-1">New Blog Post</div>
-          </div>
-          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
-            <div className="text-gray-400 text-sm">Last Published</div>
-            <div className="text-gray-200 font-medium mt-1">June 28, 2025</div>
-          </div>
-          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
-            <div className="text-gray-400 text-sm">Total Posts</div>
-            <div className="text-gray-200 font-medium mt-1">42</div>
-          </div>
-        </div> */}
             </div>
         </div>
     );
