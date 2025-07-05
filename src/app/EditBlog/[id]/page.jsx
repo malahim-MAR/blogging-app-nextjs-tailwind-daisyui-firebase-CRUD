@@ -12,16 +12,15 @@ const Page = () => {
     title: "",
     content: "",
     imageLink: "",
-    tags: [],
+    tags: "", // Changed to string
   });
   const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
-  
+
   // Available tags for selection
   const availableTags = [
-    "Politics", "Sports", "Technology", "AI", 
-    "Business", "Lifestyle", "Travel", "Health"
+    "Politics", "Sports", "Technology & AI", "Business", "Lifestyle", "Travel", "Health"
   ];
 
   useEffect(() => {
@@ -29,14 +28,17 @@ const Page = () => {
       try {
         const docRef = doc(db, "MyBlogs", id);
         const docSnap = await getDoc(docRef);
-        
+
         if (docSnap.exists()) {
           const data = docSnap.data();
           setBlogData({
             title: data.BlogTitle || "",
             content: data.BlogContent || "",
             imageLink: data.BlogImageLink || "",
-            tags: data.BlogTags || [],
+            // Handle both array and string formats
+            tags: Array.isArray(data.BlogTags)
+              ? data.BlogTags[0] || "" // Take first element if array
+              : data.BlogTags || "",
           });
         } else {
           setError("Blog post not found");
@@ -62,14 +64,15 @@ const Page = () => {
       setError("Blog title is required");
       return;
     }
-    
+
     if (!blogData.content.trim()) {
       setError("Blog content is required");
       return;
     }
-    
-    if (blogData.tags.length === 0) {
-      setError("At least one tag is required");
+
+    // Updated validation for single tag
+    if (!blogData.tags) {
+      setError("Please select a tag");
       return;
     }
 
@@ -79,7 +82,7 @@ const Page = () => {
         BlogTitle: blogData.title,
         BlogContent: blogData.content,
         BlogImageLink: blogData.imageLink,
-        BlogTags: blogData.tags,
+        BlogTags: blogData.tags, // Save as string
         BlogPublishTime: serverTimestamp(),
       });
 
@@ -91,20 +94,12 @@ const Page = () => {
     }
   };
 
-  const toggleTag = (tag) => {
-    if (blogData.tags.includes(tag)) {
-      // Remove tag
-      setBlogData(prev => ({
-        ...prev,
-        tags: prev.tags.filter(t => t !== tag)
-      }));
-    } else if (blogData.tags.length < 3) {
-      // Add tag
-      setBlogData(prev => ({
-        ...prev,
-        tags: [...prev.tags, tag]
-      }));
-    }
+  const selectTag = (tag) => {
+    // Toggle selection: select if not selected, deselect if same tag clicked
+    setBlogData(prev => ({
+      ...prev,
+      tags: prev.tags === tag ? "" : tag
+    }));
   };
 
   const handleImageError = (e) => {
@@ -115,8 +110,8 @@ const Page = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100 p-4 md:p-6">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <Link 
-            href="/AllBlogs" 
+          <Link
+            href="/AllBlogs"
             className="flex items-center gap-2 group text-indigo-400 hover:text-indigo-300 transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -124,7 +119,7 @@ const Page = () => {
             </svg>
             Back to Dashboard
           </Link>
-          
+
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
             Editing Blog Post
           </h1>
@@ -153,12 +148,12 @@ const Page = () => {
                   Blog updated successfully!
                 </div>
               )}
-              
+
               {/* Blog ID */}
               <div className="flex items-center text-sm text-gray-400">
                 <span className="bg-gray-700 px-3 py-1 rounded-full">Blog ID: {id}</span>
               </div>
-              
+
               {/* Title Input */}
               <div className="space-y-3">
                 <label className="block text-lg font-medium text-gray-300">
@@ -168,11 +163,11 @@ const Page = () => {
                   type="text"
                   className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-200 placeholder-gray-500"
                   value={blogData.title}
-                  onChange={(e) => setBlogData({...blogData, title: e.target.value})}
+                  onChange={(e) => setBlogData({ ...blogData, title: e.target.value })}
                   placeholder="Enter a compelling blog title..."
                 />
               </div>
-              
+
               {/* Image Input */}
               <div className="space-y-3">
                 <label className="block text-lg font-medium text-gray-300">
@@ -183,14 +178,14 @@ const Page = () => {
                     type="text"
                     className="flex-1 px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-200 placeholder-gray-500"
                     value={blogData.imageLink}
-                    onChange={(e) => setBlogData({...blogData, imageLink: e.target.value})}
+                    onChange={(e) => setBlogData({ ...blogData, imageLink: e.target.value })}
                     placeholder="https://example.com/image.jpg"
                   />
                   {blogData.imageLink && (
                     <div className="aspect-video w-full md:w-64 rounded-lg overflow-hidden border border-gray-700 flex-shrink-0">
-                      <img 
-                        src={blogData.imageLink} 
-                        alt="Preview" 
+                      <img
+                        src={blogData.imageLink}
+                        alt="Preview"
                         className="w-full h-full object-cover"
                         onError={handleImageError}
                       />
@@ -198,86 +193,81 @@ const Page = () => {
                   )}
                 </div>
               </div>
-              
-              {/* Tags Section */}
+
+              {/* Tags Section - Updated with selected category display */}
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <label className="block text-lg font-medium text-gray-300">
-                    Tags <span className="text-red-400">*</span>
+                    Category <span className="text-red-400">*</span>
                   </label>
                   <span className="text-sm text-gray-500">
-                    {blogData.tags.length}/3 selected
+                    {blogData.tags ? "1 selected" : "0 selected"}
                   </span>
                 </div>
-                
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {blogData.tags.map(tag => (
-                    <div
-                      key={tag}
-                      className="bg-indigo-900/30 text-indigo-300 px-3 py-2 rounded-lg flex items-center"
-                    >
-                      {tag}
+
+                {/* Show selected category */}
+                {blogData.tags && (
+                  <div className="mb-4">
+                    <p className="text-gray-400 text-sm mb-1">Selected Category:</p>
+                    <div className="inline-flex items-center bg-indigo-900/30 text-indigo-300 px-4 py-2 rounded-lg">
+                      {blogData.tags}
                       <button
                         type="button"
                         className="ml-2 text-indigo-400 hover:text-white"
-                        onClick={() => toggleTag(tag)}
+                        onClick={() => setBlogData(prev => ({ ...prev, tags: "" }))}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                         </svg>
                       </button>
                     </div>
-                  ))}
-                </div>
-                
+                  </div>
+                )}
+
                 <div className="flex flex-wrap gap-2">
                   {availableTags.map(tag => (
                     <button
                       key={tag}
                       type="button"
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                        blogData.tags.includes(tag)
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${blogData.tags === tag
                           ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
                           : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                      }`}
-                      onClick={() => toggleTag(tag)}
-                      disabled={!blogData.tags.includes(tag) && blogData.tags.length >= 3}
+                        }`}
+                      onClick={() => selectTag(tag)}
                     >
                       {tag}
                     </button>
                   ))}
                 </div>
               </div>
-              
+
               {/* Content Textarea */}
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <label className="block text-lg font-medium text-gray-300">
                     Blog Content <span className="text-red-400">*</span>
                   </label>
-                  <span className={`text-sm ${
-                    blogData.content.length < 300 ? 'text-amber-400' : 'text-green-400'
-                  }`}>
+                  <span className={`text-sm ${blogData.content.length < 300 ? 'text-amber-400' : 'text-green-400'
+                    }`}>
                     {blogData.content.length} characters
                   </span>
                 </div>
                 <textarea
                   className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-200 placeholder-gray-500 h-64"
                   value={blogData.content}
-                  onChange={(e) => setBlogData({...blogData, content: e.target.value})}
+                  onChange={(e) => setBlogData({ ...blogData, content: e.target.value })}
                   placeholder="Write your blog content here..."
                 />
               </div>
-              
+
               {/* Submit Button */}
               <div className="pt-4">
                 <button
                   type="submit"
-                  className={`w-full py-3 px-6 rounded-lg text-white font-medium text-lg transition-all shadow-lg ${
-                    loading
+                  className={`w-full py-3 px-6 rounded-lg text-white font-medium text-lg transition-all shadow-lg ${loading
                       ? 'bg-indigo-800 cursor-not-allowed'
                       : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 hover:shadow-xl'
-                  }`}
+                    }`}
                   disabled={loading}
                 >
                   {loading ? (
@@ -301,22 +291,6 @@ const Page = () => {
             </form>
           )}
         </div>
-        
-        {/* Info Section */}
-        {/* <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
-            <div className="text-gray-400 text-sm">Last Updated</div>
-            <div className="text-gray-200 font-medium mt-1">Just now</div>
-          </div>
-          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
-            <div className="text-gray-400 text-sm">Status</div>
-            <div className="text-green-400 font-medium mt-1">Published</div>
-          </div>
-          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
-            <div className="text-gray-400 text-sm">Word Count</div>
-            <div className="text-gray-200 font-medium mt-1">{blogData.content.split(/\s+/).filter(Boolean).length} words</div>
-          </div>
-        </div> */}
       </div>
     </div>
   );
