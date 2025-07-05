@@ -3,14 +3,13 @@
   themes: light --default;
 }
 
-
 /* @tailwind base;
 @tailwind components; */
 @tailwind utilities;
 
 :root {
-  --font-poppins: 'Poppins', sans-serif;
-  --font-inter: 'Inter', sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+  --font-inter: "Inter", sans-serif;
 }
 
 body {
@@ -18,10 +17,17 @@ body {
 }
 
 .font-poppins {
-  font-family: var(--font-poppins), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-poppins), -apple-system, BlinkMacSystemFont,
+    sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 .text-heading {
-  font-family: var(--font-poppins), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-poppins), -apple-system, BlinkMacSystemFont,
+    sans-serif;
 }
