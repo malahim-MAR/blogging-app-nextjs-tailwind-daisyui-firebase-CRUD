@@ -1,9 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getFirestore, doc, increment, updateDoc, getDoc, setDoc } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -20,3 +18,30 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+// Visit counter functions
+export const countVisit = async () => {
+  if (typeof window === 'undefined') return; // Skip on server
+  
+  if (!sessionStorage.getItem('visitCounted')) {
+    try {
+      const docRef = doc(db, "metrics", "visits");
+      await updateDoc(docRef, { count: increment(1) });
+      sessionStorage.setItem('visitCounted', 'true');
+    } catch (error) {
+      if (error.code === 'not-found') {
+        await setDoc(doc(db, "metrics", "visits"), { count: 1 });
+        sessionStorage.setItem('visitCounted', 'true');
+      }
+    }
+  }
+};
+
+export const getVisitCount = async () => {
+  try {
+    const docSnap = await getDoc(doc(db, "metrics", "visits"));
+    return docSnap.exists() ? docSnap.data().count : 0;
+  } catch (error) {
+    return 0;
+  }
+};
